@@ -1,0 +1,9 @@
+{
+  "name": "Universal-WebApp",
+  "version": "0.0.3",
+  "private": true,
+  "homepage": "https://github.com/Leask/Universal-WebApp",
+  "description": "Make WebApp runs smoothly on both Safari and Chrome platform.",
+  "dependencies": {
+  }
+}

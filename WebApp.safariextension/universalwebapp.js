@@ -18,6 +18,18 @@ var UniversalWebApp = {
         ) : null;
     },
 
+    getAppUrl: function(path) {
+        switch (this.browser) {
+            case 'safari':
+                return safari.extension.baseURI + path;
+                break;
+            case 'chrome':
+                return chrome.extension.getURL(path);
+            default:
+                return null;
+        }
+    },
+
     browserIdentify: function() {
         if (typeof safari !== 'undefined') {
             return (this.browser = 'safari');
@@ -72,7 +84,6 @@ var UniversalWebApp = {
                                 && request.method != ''
                     && typeof self[request.method] == 'function') {
                             self[request.method](request.params, function(result) {
-                                UniversalWebApp.log(result);
                                 sendResponse(result);
                             });
                             return true;

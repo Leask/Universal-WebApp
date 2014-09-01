@@ -1,6 +1,8 @@
 
-var initialVal=1;
-var calculatedVal=0 ;
+// just a demo
+
+
+// init UniversalWebApp
 
 UniversalWebApp.foregroundInit({
     appName: 'Universal WebApp',
@@ -8,6 +10,12 @@ UniversalWebApp.foregroundInit({
 });
 
 
-UniversalWebApp.callBackground('bigCalc', initialVal, function(result) {
-    console.log(result);
-});
+// put your foreground codes below
+
+UniversalWebApp.callBackground(
+    'test',                  // background method name
+    'Across the Great Wall', // passing params
+    function(result) {       // callback function
+        console.log(result);
+    }
+);

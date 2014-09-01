@@ -13,9 +13,9 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.3</string>
+	<string>0.0.3</string>
 	<key>CFBundleVersion</key>
-	<string>0.3</string>
+	<string>0.0.3</string>
 	<key>Chrome</key>
 	<dict>
 		<key>Database Quota</key>
@@ -29,8 +29,11 @@
 		<dict>
 			<key>End</key>
 			<array>
-				<string>universalwebapp.js</string>
 				<string>foreground.js</string>
+			</array>
+			<key>Start</key>
+			<array>
+				<string>universalwebapp.js</string>
 			</array>
 		</dict>
 	</dict>
@@ -50,5 +53,7 @@
 			<string>All</string>
 		</dict>
 	</dict>
+	<key>Website</key>
+	<string>https://github.com/Leask/Universal-WebApp</string>
 </dict>
 </plist>
