@@ -32,8 +32,8 @@ var UniversalWebApp = {
     },
     foregroundCallbackHandler: function(theMessageEvent) {
         var rawEvent = JSON.parse(theMessageEvent.name);
-        this.foregroundCallbacks[rawEvent.callback_index](theMessageEvent.message);
-        delete this.foregroundCallbacks[rawEvent.callback_index];
+        UniversalWebApp.foregroundCallbacks[rawEvent.callback_index](theMessageEvent.message);
+        delete UniversalWebApp.foregroundCallbacks[rawEvent.callback_index];
     },
     backgroundCallbackHandler: function(theMessageEvent) {
         var rawEvent = JSON.parse(theMessageEvent.name);

@@ -48,9 +48,9 @@ var UniversalWebApp = {
     },
     backgroundCallbackHandler: function(theMessageEvent) {
         var rawEvent = JSON.parse(theMessageEvent.name);
-        if (typeof rawEvent.method == 'string' && rawEvent.method != '' && typeof self[rawEvent.method] == 'function') {
+        if (typeof rawEvent.method === 'string' && rawEvent.method !== '' && typeof self[rawEvent.method] === 'function') {
             self[rawEvent.method](theMessageEvent.message, function(res) {
-                event.target.page.dispatchMessage(theMessageEvent.name, res);
+                theMessageEvent.target.page.dispatchMessage(theMessageEvent.name, res);
             });
             return true;
         }
