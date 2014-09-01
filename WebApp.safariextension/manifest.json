@@ -5,6 +5,7 @@
     "default_locale": "en",
     "background": {
         "scripts": [
+            "universalwebapp.js",
             "background.js"
         ],
         "persistent": false
@@ -18,6 +19,7 @@
     "content_scripts": [
         {
             "js": [
+                "universalwebapp.js",
                 "foreground.js"
             ],
             "matches": [
