@@ -1,11 +1,10 @@
 {
   "appName": {
-    "message": "UNN",
-    "description": "XXXX"
+    "message": "UniversalWebApp",
+    "description": "Make WebApp runs smoothly on both Safari and Chrome platform."
   },
   "appDesc": {
-    "message": "Help Canadians save on gadgets! Automatically find cheaper price while shopping online.",
-    "description":"Help Canadians save on gadgets! Automatically find cheaper price while shopping online."
+    "message": "Make WebApp runs smoothly on both Safari and Chrome platform.",
+    "description":"Make WebApp runs smoothly on both Safari and Chrome platform."
   }
 }
-
