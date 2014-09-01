@@ -31,12 +31,16 @@
     ],
     "page_action": {
         "default_icon": {
+            "19": "Icon-19.png",
+            "38": "Icon-38.png"
         },
-        "default_title": "PriceBeater",
+        "default_title": "Universal WebApp",
         "default_popup": "pageactions.html"
     },
     "icons": {
-
+        "16": "Icon-16.png",
+        "48": "Icon-48.png",
+        "128": "Icon-128.png"
     },
     "web_accessible_resources": [
         "*"
