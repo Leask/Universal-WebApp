@@ -1,23 +1,47 @@
 
 var self = typeof self != 'undefined' ? self : this;
 
+
 var UniversalWebApp = {
+
     browser: null,
+
+    appName: 'Universal WebApp',
+
     foregroundCallbacks: [],
+
+    devMode: false,
+
+    log: function() {
+        return this.devMode ? console.log.apply(
+            console, ['[' + this.appName + ']'].concat([].slice.call(arguments))
+        ) : null;
+    },
+
     browserIdentify: function() {
         if (typeof safari !== 'undefined') {
-            return this.browser = 'safari';
+            return (this.browser = 'safari');
         } else if (typeof chrome !== 'undefined') {
-            return this.browser = 'chrome';
+            return (this.browser = 'chrome');
         } else {
-            return this.browser = null;
+            return (this.browser = null);
         }
     },
-    init: function() {
+
+    init: function(options) {
+        if (options) {
+            if (options.appName) {
+                this.appName = options.appName;
+            }
+            if (options.devMode) {
+                this.devMode = options.devMode;
+            }
+        }
         this.browserIdentify();
     },
-    foregroundInit: function() {
-        this.init();
+
+    foregroundInit: function(options) {
+        this.init(options);
         switch (this.browser) {
             case 'safari':
                 return safari.self.addEventListener(
@@ -27,10 +51,13 @@ var UniversalWebApp = {
             case 'chrome':
                 // NOTHING TO DO
                 return true;
+            default:
+                return null;
         }
     },
-    backgroundInit: function() {
-        this.init();
+
+    backgroundInit: function(options) {
+        this.init(options);
         switch (this.browser) {
             case 'safari':
                 return safari.application.addEventListener(
@@ -38,14 +65,15 @@ var UniversalWebApp = {
                 );
                 break;
             case 'chrome':
+                // chrome.runtime.onMessage.addListener.apply(chrome.runtime.onMessage, arguments);
                 return chrome.runtime.onMessage.addListener(
                     function (request, sender, sendResponse) {
                         if (typeof request.method == 'string'
                                 && request.method != ''
                     && typeof self[request.method] == 'function') {
-                            self[request.method](request.params, function(res) {
-                                // apiHelper.log(res);
-                                sendResponse(res);
+                            self[request.method](request.params, function(result) {
+                                UniversalWebApp.log(result);
+                                sendResponse(result);
                             });
                             return true;
                         }
@@ -54,27 +82,32 @@ var UniversalWebApp = {
                 );
         }
     },
+
     foregroundCallbackHandler: function(theMessageEvent) {
         var rawEvent = JSON.parse(theMessageEvent.name);
         UniversalWebApp.foregroundCallbacks[rawEvent.callback_index](
             theMessageEvent.message
         );
-        delete UniversalWebApp.foregroundCallbacks[rawEvent.callback_index];
+        return delete UniversalWebApp.foregroundCallbacks[
+            rawEvent.callback_index
+        ];
     },
+
     backgroundCallbackHandler: function(theMessageEvent) {
         var rawEvent = JSON.parse(theMessageEvent.name);
         if (typeof rawEvent.method  === 'string'
                 && rawEvent.method  !== ''
     && typeof self[rawEvent.method] === 'function') {
-            self[rawEvent.method](theMessageEvent.message, function(res) {
+            self[rawEvent.method](theMessageEvent.message, function(result) {
                 theMessageEvent.target.page.dispatchMessage(
-                    theMessageEvent.name, res
+                    theMessageEvent.name, result
                 );
             });
             return true;
         }
         return false;
     },
+
     callBackground: function(method, params, callback) {
         callback = typeof callback === 'function' ? callback : function() {};
         switch (this.browser) {
@@ -89,9 +122,9 @@ var UniversalWebApp = {
             case 'chrome':
                 chrome.runtime.sendMessage(
                     {method: method, params: params},
-                    function(res) { callback(res); }
+                    function(result) { callback(result); }
                 );
         }
     }
-};
 
+};

@@ -5,4 +5,7 @@ function bigCalc(startVal, callback) {
     callback(endVal);
 }
 
-UniversalWebApp.backgroundInit();
+UniversalWebApp.backgroundInit({
+    appName: 'Universal WebApp',
+    devMode: true
+});
