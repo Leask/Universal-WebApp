@@ -1,0 +1,44 @@
+{
+    "name": "__MSG_appName__",
+    "version": "2.1.3",
+    "description": "__MSG_appDesc__",
+    "default_locale": "en",
+    "background": {
+        "scripts": [
+            "background.js"
+        ],
+        "persistent": false
+    },
+    "permissions": [
+        "https://*/*",
+        "http://*/*",
+        "unlimitedStorage",
+        "tabs"
+    ],
+    "content_scripts": [
+        {
+            "js": [
+                "foreground.js"
+            ],
+            "matches": [
+                "http://*/*",
+                "https://*/*"
+            ],
+            "all_frames": false
+        }
+    ],
+    "page_action": {
+        "default_icon": {
+        },
+        "default_title": "PriceBeater",
+        "default_popup": "pageactions.html"
+    },
+    "icons": {
+
+    },
+    "web_accessible_resources": [
+        "*"
+    ],
+    "content_security_policy": "script-src 'self' https://www.google-analytics.com 'unsafe-eval'; object-src 'self'",
+    "manifest_version": 2
+}
