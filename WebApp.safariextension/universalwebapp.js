@@ -96,6 +96,10 @@ var UniversalWebApp = {
 
     foregroundCallbackHandler: function(theMessageEvent) {
         var rawEvent = JSON.parse(theMessageEvent.name);
+        if (typeof UniversalWebApp.foregroundCallbacks[rawEvent.callback_index]
+        !== 'function') {
+            return null;
+        }
         UniversalWebApp.foregroundCallbacks[rawEvent.callback_index](
             theMessageEvent.message
         );
@@ -105,7 +109,12 @@ var UniversalWebApp = {
     },
 
     backgroundCallbackHandler: function(theMessageEvent) {
-        var rawEvent = JSON.parse(theMessageEvent.name);
+        var rawEvent = null;
+        try {
+            rawEvent = JSON.parse(theMessageEvent.name);
+        } catch (error) {
+            return null;
+        }
         if (typeof rawEvent.method  === 'string'
                 && rawEvent.method  !== ''
     && typeof self[rawEvent.method] === 'function') {
