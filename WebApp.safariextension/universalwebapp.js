@@ -18,11 +18,31 @@ var UniversalWebApp = {
         ) : null;
     },
 
+    getCurUrl: function(callback) {
+        // returning feature is for Safari only!
+        switch (this.browser) {
+            case 'safari':
+                var url = safari.application.activeBrowserWindow.activeTab.url;
+                if (typeof callback === 'function') {
+                    callback(url);
+                }
+                return url;
+            case 'chrome':
+                return chrome.tabs.query({
+                    active  : true,
+                    windowId: chrome.windows.WINDOW_ID_CURRENT
+                }, function(tabs) {
+                    callback(tabs[0].url);
+                });
+            default:
+                return null;
+        }
+    },
+
     getAppUrl: function(path) {
         switch (this.browser) {
             case 'safari':
                 return safari.extension.baseURI + path;
-                break;
             case 'chrome':
                 return chrome.extension.getURL(path);
             default:
@@ -77,15 +97,19 @@ var UniversalWebApp = {
                 );
                 break;
             case 'chrome':
-                // chrome.runtime.onMessage.addListener.apply(chrome.runtime.onMessage, arguments);
+                // chrome.runtime.onMessage.addListener.apply(
+                //     chrome.runtime.onMessage, arguments
+                // );
                 return chrome.runtime.onMessage.addListener(
                     function (request, sender, sendResponse) {
                         if (typeof request.method == 'string'
                                 && request.method != ''
                     && typeof self[request.method] == 'function') {
-                            self[request.method](request.params, function(result) {
-                                sendResponse(result);
-                            });
+                            self[request.method](
+                                request.params, function(result) {
+                                    sendResponse(result);
+                                }
+                            );
                             return true;
                         }
                         return false;
@@ -95,7 +119,12 @@ var UniversalWebApp = {
     },
 
     foregroundCallbackHandler: function(theMessageEvent) {
-        var rawEvent = JSON.parse(theMessageEvent.name);
+        var rawEvent = null;
+        try {
+            rawEvent = JSON.parse(theMessageEvent.name);
+        } catch (error) {
+            return null;
+        }
         if (typeof UniversalWebApp.foregroundCallbacks[rawEvent.callback_index]
         !== 'function') {
             return null;
@@ -119,13 +148,30 @@ var UniversalWebApp = {
                 && rawEvent.method  !== ''
     && typeof self[rawEvent.method] === 'function') {
             self[rawEvent.method](theMessageEvent.message, function(result) {
-                theMessageEvent.target.page.dispatchMessage(
-                    theMessageEvent.name, result
-                );
+                if (typeof theMessageEvent.target === 'undefined') {
+                    theMessageEvent.message = result;
+                    // @todo: this [0] is a walkaround
+                    return safari.extension.popovers[0]
+                          .contentWindow.UniversalWebApp
+                          .foregroundCallbackHandler(theMessageEvent);
+                } else {
+                    return theMessageEvent.target.page.dispatchMessage(
+                        theMessageEvent.name, result
+                    );
+                }
             });
-            return true;
         }
         return false;
+    },
+
+    dispatchMessage: function(name, message) {
+        if (safari.self.tab) {
+            safari.self.tab.dispatchMessage(name, message);
+        } else if (safari.extension.globalPage.contentWindow) {
+            safari.extension.globalPage
+           .contentWindow.UniversalWebApp
+           .backgroundCallbackHandler({name: name, message: message});
+        }
     },
 
     callBackground: function(method, params, callback) {
@@ -134,7 +180,7 @@ var UniversalWebApp = {
             case 'safari':
                 var callback_index = this.foregroundCallbacks.push(callback)
                                    - 1;
-                safari.self.tab.dispatchMessage(JSON.stringify({
+                this.dispatchMessage(JSON.stringify({
                     method         : method,
                     callback_index : callback_index
                 }), params);
